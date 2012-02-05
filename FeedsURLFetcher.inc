@@ -49,72 +49,6 @@ class FeedsURLFetcher extends FeedsFetcher {
   }
 
   /**
-   * Implements FeedsFetcher::request().
-   */
-  public function request($feed_nid = 0) {
-    feeds_dbg($_GET);
-    @feeds_dbg(file_get_contents('php://input'));
-    // A subscription verification has been sent, verify.
-    if (isset($_GET['hub_challenge'])) {
-      $this->subscriber($feed_nid)->verifyRequest();
-    }
-    // No subscription notification has ben sent, we are being notified.
-    else {
-      try {
-        feeds_source($this->id, $feed_nid)->existing()->import();
-      }
-      catch (Exception $e) {
-        // In case of an error, respond with a 503 Service (temporary) unavailable.
-        header('URL/1.1 503 "Not Found"', NULL, 503);
-        exit();
-      }
-    }
-    // Will generate the default 200 response.
-    header('URL/1.1 200 "OK"', NULL, 200);
-    exit();
-  }
-
-  /**
-   * Override parent::configDefaults().
-   */
-  public function configDefaults() {
-    return array(
-      'auto_detect_feeds' => FALSE,
-      'use_pubsubhubbub' => FALSE,
-      'designated_hub' => '',
-    );
-  }
-
-  /**
-   * Override parent::configForm().
-   */
-  public function configForm(&$form_state) {
-    $form = array();
-    $form['auto_detect_feeds'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Auto detect feeds'),
-      '#description' => t('If the supplied URL does not point to a feed but an HTML document, attempt to extract a feed URL from the document.'),
-      '#default_value' => $this->config['auto_detect_feeds'],
-    );
-    $form['use_pubsubhubbub'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use PubSubHubbub'),
-      '#description' => t('Attempt to use a <a href="URL://en.wikipedia.org/wiki/PubSubHubbub">PubSubHubbub</a> subscription if available.'),
-      '#default_value' => $this->config['use_pubsubhubbub'],
-    );
-    $form['designated_hub'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Designated hub'),
-      '#description' => t('Enter the URL of a designated PubSubHubbub hub (e. g. superfeedr.com). If given, this hub will be used instead of the hub specified in the actual feed.'),
-      '#default_value' => $this->config['designated_hub'],
-      '#dependency' => array(
-        'edit-use-pubsubhubbub' => array(1),
-      ),
-    );
-    return $form;
-  }
-
-  /**
    * Expose source form.
    */
   public function sourceForm($source_config) {
@@ -122,7 +56,7 @@ class FeedsURLFetcher extends FeedsFetcher {
     $form['source'] = array(
       '#type' => 'textfield',
       '#title' => t('URL'),
-      '#description' => t('Enter a feed URL.'),
+      '#description' => t('Enter a feed URL. You can use any of supported protocols by PHP.'),
       '#default_value' => isset($source_config['source']) ? $source_config['source'] : '',
       '#maxlength' => NULL,
       '#required' => TRUE,
@@ -137,12 +71,6 @@ class FeedsURLFetcher extends FeedsFetcher {
     if (!feeds_valid_url($values['source'], TRUE)) {
       $form_key = 'feeds][' . get_class($this) . '][source';
       form_set_error($form_key, t('The URL %source is invalid.', array('%source' => $values['source'])));
-    }
-    elseif ($this->config['auto_detect_feeds']) {
-      feeds_include_library('URL_request.inc', 'URL_request');
-      if ($url = URL_request_get_common_syndication($values['source'])) {
-        $values['source'] = $url;
-      }
     }
   }
 }
