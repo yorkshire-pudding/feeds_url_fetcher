@@ -24,10 +24,10 @@ class FeedsURLFetcherResult extends FeedsFetcherResult {
    */
   public function getRaw() {
     $data = file_get_contents($this->url);
-    
+
     if (!is_string($data)) {
       throw new Exception(t('Failed to retrieve URL.'));
-      watchdog('feeds', 'Failed to retrieve URL !url.', array('!url' => $this->url), WATCHDOG_ERROR); 
+      watchdog('feeds', 'Failed to retrieve URL !url.', array('!url' => $this->url), WATCHDOG_ERROR);
     }
 
     return $this->sanitizeRaw($data);
@@ -44,7 +44,7 @@ class FeedsURLFetcher extends FeedsFetcher {
    */
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);
-    
+
     return new FeedsURLFetcherResult($source_config['source']);
   }
 
