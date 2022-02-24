@@ -6,29 +6,30 @@
  */
 
 /**
- * Implementation of hook_ctools_plugin_api().
- */
-function feeds_url_fetcher_ctools_plugin_api($owner, $api) {
-  if ($owner == 'feeds' && $api == 'plugins') {
-    return array('version' => 1);
-  }
-}
-
-/**
  * Implementation of hook_feeds_plugins().
  */
 function feeds_url_fetcher_feeds_plugins() {
   $info = array();
-  $info['URLFetcher'] = array(
+  $info['FeedsURLFetcher'] = array(
     'name' => 'URL Fetcher',
-    'description' => 'Download content from an URL',
-    'help' => 'Fetches files form URL by protocols supported by PHP',
+    'description' => 'Download content from a URL',
+    'help' => 'Fetches files from URL by protocols supported by PHP',
     'handler' => array(
       'parent' => 'FeedsFetcher',
       'class' => 'FeedsURLFetcher',
       'file' => 'FeedsURLFetcher.inc',
-      'path' => drupal_get_path('module', 'feeds_url_fetcher'),
+      'path' => backdrop_get_path('module', 'feeds_url_fetcher'),
     ),
   );
   return $info;
+}
+
+/**
+ * Implementation of hook_autoload_info().
+ */
+function feeds_url_fetcher_autoload_info() {
+  return array(
+    'FeedsURLFetcher' => 'FeedsURLFetcher.inc',
+    'FeedsURLFetcherResult' => 'FeedsURLFetcher.inc',
+  );
 }

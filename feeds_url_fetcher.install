@@ -1,0 +1,14 @@
+<?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the Feeds JSONPath Parser
+ * module.
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function feeds_url_fetcher_enable() {
+  // Clear Feeds' plugin cache so that this plugin shows up.
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}

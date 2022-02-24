@@ -49,6 +49,30 @@ class FeedsURLFetcher extends FeedsFetcher {
   }
 
   /**
+   * Override parent::configDefaults().
+   */
+  public function configDefaults() {
+    return array(
+      'source' => 'http',
+    ) + parent::configDefaults();
+  }
+
+  /**
+   * Override parent::configForm().
+   */
+  public function configForm(&$form_state) {
+    $form = array();
+    $form['source'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Set URL'),
+      '#description' => t('Enter a feed URL. You can use any of supported protocols by PHP.'),
+      '#default_value' => $this->config['source'],
+    );
+    return $form;
+  }
+
+
+  /**
    * Expose source form.
    */
   public function sourceForm($source_config) {

@@ -1,8 +1,6 @@
-; $Id$
-name = Feeds URL Fetcher
-description = "A Feeds plugin that will fetch files from an any URL supported by PHP"
-core = 7.x
+type = module
+name = URL Fetcher
+description = A Feeds plugin that will fetch files from any URL supported by PHP
+backdrop = 1.x
 package = Feeds
 dependencies[] = feeds
-files[] = FeedsURLFetcher.inc
-
